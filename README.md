@@ -11,17 +11,17 @@ Installation
 pip install git+https://github.com/OpenValue/azure_blobstorage_utils.git
 ```
 
-With extras (for extended usage) :
+With extensions (for extended usage) :
 
 ``` bash
-pip install -e git+https://github.com/OpenValue/azure_blobstorage_utils.git#egg=azure-blobstorage-utils[extras]
+pip install -e git+https://github.com/OpenValue/azure_blobstorage_utils.git#egg=azure-blobstorage-utils[extended]
 ```
 
 Build
 -----
 
 ```bash
-git clone 
+git clone https://github.com/OpenValue/azure_blobstorage_utils.git
 cd azure-blobstorage-utils
 python setup.py bdist_wheel
 ```

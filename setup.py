@@ -16,7 +16,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where='src'),
     install_requires=["azure-storage-blob"],
     extras_require={
-        "extras": ["pandas", "openpyxl", "opencv-python", "pyarrow"]
+        "extended": ["pandas", "openpyxl", "opencv-python", "pyarrow"]
     },
     classifiers=[
         "Intended Audience :: Developers",
