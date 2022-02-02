@@ -1,0 +1,15 @@
+# Env
+.conda/
+.idea/
+.DS_Store
+.pytest_cache/
+*.pyc
+build/
+dist/
+*egg-info
+
+# Notebooks
+*.ipynb
+.ipynb_checkpoints/
+#
+azure_tmp/

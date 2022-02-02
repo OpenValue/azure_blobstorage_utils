@@ -1,0 +1,5 @@
+azure-storage-blob
+pandas
+openpyxl
+opencv-python
+pyarrow

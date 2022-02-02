@@ -1,0 +1,24 @@
+import setuptools
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="azure_blobstorage_utils",
+    version="0.1.0",
+    author="François Valadier",
+    author_email="francois.valadier@gmail.com",
+    description="Azure Blob Storage utils",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="",
+    package_dir={"": "src"},
+    packages=setuptools.find_packages(where='src'),
+    install_requires=["azure-storage-blob"],
+    extras_require={
+        "extras": ["pandas", "openpyxl", "opencv-python", "pyarrow"]
+    },
+    classifiers=[
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent"],
+)
