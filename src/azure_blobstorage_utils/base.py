@@ -4,6 +4,7 @@ from typing import List
 import os
 import shutil
 from typing import Optional, Iterable, Union
+import json
 
 
 class BlobStorageBase:
@@ -72,7 +73,7 @@ class BlobStorageBase:
         """
         shutil.rmtree(self.local_base_path)
 
-    def download_bytes(self, container_name: str, remote_file_name: str) -> bytes:
+    def get_file_as_bytes(self, container_name: str, remote_file_name: str) -> bytes:
         """
 
         :param container_name:
@@ -82,14 +83,23 @@ class BlobStorageBase:
         blob_client = self.get_blob_client(container_name, remote_file_name)
         return blob_client.download_blob().readall()
 
-    def download_text(self, container_name: str, remote_file_name: str) -> str:
+    def get_file_as_text(self, container_name: str, remote_file_name: str) -> str:
         """
 
         :param container_name:
         :param remote_file_name:
         :return:
         """
-        return self.download_bytes(container_name, remote_file_name).decode("UTF-8")
+        return self.get_file_as_bytes(container_name, remote_file_name).decode("UTF-8")
+
+    def get_file_as_dict(self, container_name: str, remote_file_name: str) -> str:
+        """
+
+        :param container_name:
+        :param remote_file_name:
+        :return:
+        """
+        return json.loads(self.get_file_as_text(container_name, remote_file_name))
 
     def get_list_blobs_name(self, container_name: str, prefix: Optional[str] = None, return_list: bool = True) \
             -> Union[List[str], Iterable[str]]:

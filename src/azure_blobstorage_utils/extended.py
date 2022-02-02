@@ -28,7 +28,7 @@ class BlobStorageExtended(BlobStorageBase):
         :param kwargs:
         :return:
         """
-        stream = self.download_bytes(container_name, file_path)
+        stream = self.get_file_as_bytes(container_name, file_path)
         if file_path.endswith(".csv") | file_path.endswith(".txt"):
             return pd.read_csv(io.BytesIO(stream), **kwargs)
         elif file_path.endswith(".parquet"):
@@ -48,7 +48,7 @@ class BlobStorageExtended(BlobStorageBase):
         :param file_path:
         :return:
         """
-        stream = self.download_bytes(container_name, file_path)
+        stream = self.get_file_as_bytes(container_name, file_path)
         img = cv2.imdecode(np.frombuffer(stream, np.uint8), cv2.IMREAD_COLOR)
         return img
 
