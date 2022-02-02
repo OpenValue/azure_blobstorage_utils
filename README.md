@@ -8,7 +8,7 @@ Installation
 ------------
 
 ```bash
-pip install 
+pip install git+https://github.com/OpenValue/azure_blobstorage_utils.git
 ```
 
 Build
@@ -51,16 +51,15 @@ from azure_blobstorage_utils import BlobStorageExtended
 extended_blob_helper = BlobStorageExtended(connection_string)
 
 # Get files as pandas dataframe
-extended_blob_helper_blob_helper.get_file_as_pandas_df(container_name, file_name)
+extended_blob_helper.get_file_as_pandas_df(container_name, file_name)
 
-# Download files
-base_blob_helper.download_file(container_name, file_name)
+# Get files as numpy array
+extended_blob_helper.get_image_as_numpy_array(container_name, file_name)
 
 # Upload files
-base_blob_helper.upload_file(container_name, local_file_name)
-
-# Upload bytes
-base_blob_helper.upload_bytes(bytes, container_name, remote_file_name)
+extended_blob_helper.upload_image_bytes_as_jpg_file(img_bytes,
+                                                    container_name,
+                                                    remote_file_name)
 ```
 
 Development
@@ -81,4 +80,4 @@ Activate Anaconda local environment as below:
 
 ```bash
 conda activate ${PWD}/.conda
-``
+```

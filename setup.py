@@ -11,7 +11,7 @@ setuptools.setup(
     description="Azure Blob Storage utils",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="",
+    url="https://github.com/OpenValue/azure_blobstorage_utils.git",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where='src'),
     install_requires=["azure-storage-blob"],
