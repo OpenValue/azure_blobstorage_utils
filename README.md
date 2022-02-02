@@ -1,8 +1,6 @@
 Azure Blob Storage Utils
 ========================
-Purpose
--------
-Python toolbox for Azure Blob Storage.
+A Python toolbox for Azure Blob Storage.
 
 Installation
 ------------
@@ -46,12 +44,13 @@ base_blob_helper.upload_file(container_name, local_file_name)
 # Upload bytes
 base_blob_helper.upload_bytes(bytes, container_name, remote_file_name)
 ```
+Several other parameters are available. Documentation is coming soon.
 
 Extended usage
 -----------
 
 ```python
-from azure_blobstorage_utils import BlobStorageExtended # need installation with extras !
+from azure_blobstorage_utils import BlobStorageExtended  # need installation with extras !
 
 # BlobStorageExtended inherits from BlobStorageBase
 extended_blob_helper = BlobStorageExtended(connection_string)
@@ -67,6 +66,7 @@ extended_blob_helper.upload_image_bytes_as_jpg_file(img_bytes,
                                                     container_name,
                                                     remote_file_name)
 ```
+Several other parameters are available. Documentation is coming soon.
 
 Development
 -----------
