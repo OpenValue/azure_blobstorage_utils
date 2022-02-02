@@ -1,8 +1,19 @@
 from .base import BlobStorageBase
-import pandas as pd
 import io
-import cv2
-import numpy as np
+import sys
+
+try:
+    import pandas as pd
+    import cv2
+    import numpy as np
+except ModuleNotFoundError as moduleErr:
+    print("[Error]: Failed to import (Module Not Found) {}.".format(moduleErr.args[0]))
+    print("Please install with extras")
+    sys.exit(1)
+except ImportError as impErr:
+    print("[Error]: Failed to import (Import Error) {}.".format(impErr.args[0]))
+    print("Please install with extras")
+    sys.exit(1)
 
 
 class BlobStorageExtended(BlobStorageBase):
