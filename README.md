@@ -11,6 +11,12 @@ Installation
 pip install git+https://github.com/OpenValue/azure_blobstorage_utils.git
 ```
 
+With extras (for extended usage) :
+
+``` bash
+pip install -e git+https://github.com/OpenValue/azure_blobstorage_utils.git#egg=azure-blobstorage-utils[extras]
+```
+
 Build
 -----
 
@@ -45,7 +51,7 @@ Extended usage
 -----------
 
 ```python
-from azure_blobstorage_utils import BlobStorageExtended
+from azure_blobstorage_utils import BlobStorageExtended # need installation with extras !
 
 # BlobStorageExtended inherits from BlobStorageBase
 extended_blob_helper = BlobStorageExtended(connection_string)
