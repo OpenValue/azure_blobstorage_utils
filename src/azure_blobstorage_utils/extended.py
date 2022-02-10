@@ -1,6 +1,7 @@
 from .base import BlobStorageBase
 import io
 import sys
+import os
 
 try:
     import pandas as pd
@@ -65,3 +66,26 @@ class BlobStorageExtended(BlobStorageBase):
         _, img_encode = cv2.imencode('.jpg', img)
         img_bytes = img_encode.tobytes()
         self.upload_bytes(img_bytes, container_name, remote_file_name, overwrite)
+
+    def upload_pandas_df(self, df: pd.DataFrame, container_name: str, remote_file_name: str, **kwargs) -> pd.DataFrame:
+        """
+
+        :param container_name:
+        :param remote_file_name:
+        :param kwargs:
+        :return:
+        """
+        foldername, filename = self.get_folder_and_filename_from_full_path(remote_file_name)
+        if filename.endswith(".csv") | filename.endswith(".txt"):
+            df.to_csv(self.local_base_path + filename, **kwargs)
+        elif remote_file_name.endswith(".parquet"):
+            df.to_parquet(self.local_base_path + filename, **kwargs)
+        elif remote_file_name.endswith(".json"):
+            df.to_json(self.local_base_path + filename, **kwargs)
+        elif remote_file_name.endswith(".xls") | filename.endswith(".xlsx"):
+            df.to_xlsx(self.local_base_path + filename, **kwargs)
+        else:
+            print("Extension not recognized - only ['csv','txt','parquet','json','xls','xlsx'] are supported.")
+        if os.path.exsits(self.local_base_path + filename):
+            self.upload_file(container_name, local_file_name=self.local_base_path + filename,
+                             remote_file_name=remote_file_name)
