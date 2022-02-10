@@ -114,12 +114,11 @@ class BlobStorageBase:
         if container_client.exists():
             if prefix is not None:
                 res = (blob.name for blob in container_client.list_blobs(name_starts_with=prefix))
-                if return_list:
-                    res = list(res)
             else:
                 res = (blob.name for blob in container_client.list_blobs())
-                if return_list:
-                    res = list(res)
+
+            if return_list:
+                res = list(res)
             return res
 
         else:
