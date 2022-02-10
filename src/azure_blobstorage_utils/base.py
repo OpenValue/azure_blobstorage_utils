@@ -155,6 +155,22 @@ class BlobStorageBase:
         with open(local_file_name, "wb") as my_blob:
             my_blob.write(blob_client.download_blob().readall())
 
+    def download_folder(self, container_name: str, remote_folder: str, local_folder: Optional[str] = None):
+        """
+        
+        :param container_name:
+        :param remote_folder:
+        :param local_folder:
+        :return:
+        """
+        blob_gen = self.get_list_blobs_name(container_name, prefix=remote_folder, return_list=False)
+
+        for blob_name in blob_gen:
+            if local_folder is not None:
+                self.download_file(container_name, blob_name, (local_folder + blob_name).replace("//", "/"))
+            else:
+                self.download_file(container_name, blob_name)
+
     def upload_file(self, container_name: str, local_file_name: str, remote_file_name: Optional[str] = None,
                     overwrite: bool = False):
         """
