@@ -114,12 +114,11 @@ class BlobStorageBase:
         if container_client.exists():
             if prefix is not None:
                 res = (blob.name for blob in container_client.list_blobs(name_starts_with=prefix))
-                if return_list:
-                    res = list(res)
             else:
                 res = (blob.name for blob in container_client.list_blobs())
-                if return_list:
-                    res = list(res)
+
+            if return_list:
+                res = list(res)
             return res
 
         else:
@@ -156,6 +155,22 @@ class BlobStorageBase:
         with open(local_file_name, "wb") as my_blob:
             my_blob.write(blob_client.download_blob().readall())
 
+    def download_folder(self, container_name: str, remote_folder: str, local_folder: Optional[str] = None):
+        """
+
+        :param container_name:
+        :param remote_folder:
+        :param local_folder:
+        :return:
+        """
+        blob_gen = self.get_list_blobs_name(container_name, prefix=remote_folder, return_list=False)
+
+        for blob_name in blob_gen:
+            if local_folder is not None:
+                self.download_file(container_name, blob_name, (local_folder + blob_name).replace("//", "/"))
+            else:
+                self.download_file(container_name, blob_name)
+
     def upload_file(self, container_name: str, local_file_name: str, remote_file_name: Optional[str] = None,
                     overwrite: bool = False):
         """
@@ -183,6 +198,41 @@ class BlobStorageBase:
             print("File [{}] already exists. Use overwrite = True if needed".format(remote_file_name))
             pass
 
+    def _get_filepaths_from_folder(self, directory: str):
+        """
+
+        :param directory:
+        :return:
+        """
+        file_paths = []  # List which will store all of the full filepaths.
+
+        # Walk the tree.
+        for root, directories, files in os.walk(directory):
+            for filename in files:
+                # Join the two strings in order to form the full filepath.
+                filepath = os.path.join(root, filename)
+                file_paths.append(filepath)  # Add it to the list.
+
+        return file_paths
+
+    def upload_folder(self, container_name: str, local_folder_name: str, remote_folder_name: Optional[str] = None,
+                      overwrite: bool = False):
+        """
+
+        :param container_name:
+        :param local_file_name:
+        :param remote_file_name:
+        :param overwrite:
+        :return:
+        """
+        filepaths = self._get_filepaths_from_folder(local_folder_name)
+        for filepath in filepaths:
+            if remote_folder_name is not None:
+                self.upload_file(container_name, filepath, (remote_folder_name + filepath).replace("//", "/"),
+                                 overwrite)
+            else:
+                self.upload_file(container_name, filepath, filepath, overwrite)
+
     def upload_bytes(self, bytes: bytes, container_name: str, remote_file_name: str, overwrite: bool = False):
         """
 
@@ -199,3 +249,16 @@ class BlobStorageBase:
 
         blob_client = container_client.get_blob_client(remote_file_name)
         blob_client.upload_blob(bytes, overwrite=overwrite)
+
+    def delete_blobs(self, container_name: str, remote_file_names: List[str]):
+        """
+
+        :param container_name:
+        :param remote_file_names:
+        :return:
+        """
+        container_client = self.get_container_client(container_name)
+        if not container_client.exists():
+            pass
+        else:
+            container_client.delete_blobs(*remote_file_names)
