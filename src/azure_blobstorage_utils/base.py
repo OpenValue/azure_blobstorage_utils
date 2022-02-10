@@ -157,7 +157,7 @@ class BlobStorageBase:
 
     def download_folder(self, container_name: str, remote_folder: str, local_folder: Optional[str] = None):
         """
-        
+
         :param container_name:
         :param remote_folder:
         :param local_folder:
