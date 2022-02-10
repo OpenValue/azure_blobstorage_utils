@@ -86,6 +86,6 @@ class BlobStorageExtended(BlobStorageBase):
             df.to_xlsx(self.local_base_path + filename, **kwargs)
         else:
             print("Extension not recognized - only ['csv','txt','parquet','json','xls','xlsx'] are supported.")
-        if os.path.exsits(self.local_base_path + filename):
+        if os.path.exists(self.local_base_path + filename):
             self.upload_file(container_name, local_file_name=self.local_base_path + filename,
                              remote_file_name=remote_file_name)
