@@ -1,6 +1,7 @@
 # TODO
-- [BASE] Add blob deletion
-- [BASE] Add upload folder
-- [EXTENDED] Add upload DF as type
+
+- [BASE] Add blob deletion - ok
+- [BASE] Add upload folder - ok
+- [EXTENDED] Add upload DF as type - ok
 - [ALL] Generate documentation
 
