@@ -67,7 +67,8 @@ class BlobStorageExtended(BlobStorageBase):
         img_bytes = img_encode.tobytes()
         self.upload_bytes(img_bytes, container_name, remote_file_name, overwrite)
 
-    def upload_pandas_df(self, df: pd.DataFrame, container_name: str, remote_file_name: str, **kwargs) -> pd.DataFrame:
+    def upload_pandas_df(self, df: pd.DataFrame, container_name: str, remote_file_name: str, overwrite: bool = False,
+                         **kwargs) -> pd.DataFrame:
         """
 
         :param container_name:
@@ -88,4 +89,4 @@ class BlobStorageExtended(BlobStorageBase):
             print("Extension not recognized - only ['csv','txt','parquet','json','xls','xlsx'] are supported.")
         if os.path.exists(self.local_base_path + filename):
             self.upload_file(container_name, local_file_name=self.local_base_path + filename,
-                             remote_file_name=remote_file_name)
+                             remote_file_name=remote_file_name, overwrite=overwrite)
