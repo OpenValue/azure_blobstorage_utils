@@ -11,6 +11,7 @@ class BlobStorageBase:
     def __init__(self, connection_string: str, local_base_path: str = "azure_tmp/"):
         self.blob_service_client = BlobServiceClient.from_connection_string(connection_string)
         self.local_base_path = local_base_path
+        self.create_local_dir(self.local_base_path)
         print("Using path: [{}] as local storage".format(self.local_base_path))
 
     @staticmethod
