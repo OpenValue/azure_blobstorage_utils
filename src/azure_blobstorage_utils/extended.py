@@ -84,7 +84,7 @@ class BlobStorageExtended(BlobStorageBase):
         elif remote_file_name.endswith(".json"):
             df.to_json(self.local_base_path + filename, **kwargs)
         elif remote_file_name.endswith(".xls") | filename.endswith(".xlsx"):
-            df.to_xlsx(self.local_base_path + filename, **kwargs)
+            df.to_excel(self.local_base_path + filename, **kwargs)
         else:
             print("Extension not recognized - only ['csv','txt','parquet','json','xls','xlsx'] are supported.")
         if os.path.exists(self.local_base_path + filename):
