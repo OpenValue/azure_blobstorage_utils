@@ -30,12 +30,12 @@ class BlobStorageBase:
         :param filename:
         :return:
         """
-        foldername = None
+        folder_name = None
         filename_split = filename.split("/")
         if len(filename_split) > 1:
-            foldername = "/".join(filename_split[:-1]) + "/"
+            folder_name = "/".join(filename_split[:-1]) + "/"
             filename = filename_split[-1]
-        return foldername, filename
+        return folder_name, filename
 
     def get_container_client(self, container_name: str):
         """
@@ -56,6 +56,14 @@ class BlobStorageBase:
         except ResourceExistsError:
             print("Container [{}] already exists. Skipping creation".format(container_name))
             pass
+
+    def delete_container(self, container_name: str):
+        """
+
+        :param container_name:
+        :return:
+        """
+        self.blob_service_client.delete_container(container_name)
 
     def get_blob_client(self, container_name: str, blob_name: str):
         """
