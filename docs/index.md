@@ -4,15 +4,13 @@ Azure Blob Storage utils provides a toolbox to interact with Azure Blob Storage.
 
 # Usage
 
-```python
+```py title="Define credentials"
 connection_string = "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>;EndpointSuffix=core.windows.net"
 container_name = "my_container"
 ```
 
-Basic usage
------------
 
-```python
+```py title="Basic usage"
 from azure_blobstorage_utils import BlobStorageBase
 
 base_blob_helper = BlobStorageBase(connection_string)
@@ -27,14 +25,10 @@ base_blob_helper.download_file(container_name, file_name)
 base_blob_helper.upload_file(container_name, local_file_name)
 
 # Upload bytes
-base_blob_helper.upload_bytes(bytes, container_name, remote_file_name)
+base_blob_helper.upload_bytes(my_bytes_object, container_name, remote_file_name)
 ```
 
-
-Extended usage
------------
-
-```python
+```py title="Extended usage"
 from azure_blobstorage_utils import BlobStorageExtended  # need installation with extras !
 
 # BlobStorageExtended inherits from BlobStorageBase

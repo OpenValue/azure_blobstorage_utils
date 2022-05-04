@@ -2,9 +2,12 @@ Azure Blob Storage Utils
 ========================
 A Python toolbox for Azure Blob Storage.
 
+Documentation
+-------------
+Documentation is available [here](https://azure-blob-storage-utils.readthedocs.io/en/latest/)
+
 Installation
 ------------
-
 ```bash
 pip install git+https://github.com/OpenValue/azure_blobstorage_utils.git
 ```
@@ -17,56 +20,11 @@ pip install -e git+https://github.com/OpenValue/azure_blobstorage_utils.git#egg=
 
 Build
 -----
-
 ```bash
 git clone https://github.com/OpenValue/azure_blobstorage_utils.git
 cd azure-blobstorage-utils
 python setup.py bdist_wheel
 ```
-
-Basic usage
------------
-
-```python
-from azure_blobstorage_utils import BlobStorageBase
-
-base_blob_helper = BlobStorageBase(connection_string)
-
-# List files
-base_blob_helper.get_list_blobs_name(container_name, prefix="xxxx")
-
-# Download files
-base_blob_helper.download_file(container_name, file_name)
-
-# Upload files
-base_blob_helper.upload_file(container_name, local_file_name)
-
-# Upload bytes
-base_blob_helper.upload_bytes(bytes, container_name, remote_file_name)
-```
-Several other parameters are available. Documentation is coming soon.
-
-Extended usage
------------
-
-```python
-from azure_blobstorage_utils import BlobStorageExtended  # need installation with extras !
-
-# BlobStorageExtended inherits from BlobStorageBase
-extended_blob_helper = BlobStorageExtended(connection_string)
-
-# Get files as pandas dataframe
-extended_blob_helper.get_file_as_pandas_df(container_name, file_name)
-
-# Get files as numpy array
-extended_blob_helper.get_image_as_numpy_array(container_name, file_name)
-
-# Upload files
-extended_blob_helper.upload_image_bytes_as_jpg_file(img_bytes,
-                                                    container_name,
-                                                    remote_file_name)
-```
-Several other parameters are available. Documentation is coming soon.
 
 Development
 -----------

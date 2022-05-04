@@ -19,7 +19,7 @@ except ImportError as impErr:
 
 
 class BlobStorageExtended(BlobStorageBase):
-    def __init__(self, connection_string: str, local_base_path: str = "azure_tmp/"):
+    def __init__(self, connection_string: str, local_base_path: Optional[str] = "azure_tmp/"):
         """
 
         Args:
