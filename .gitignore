@@ -13,3 +13,6 @@ dist/
 .ipynb_checkpoints/
 #
 azure_tmp/
+
+# Docs
+docs/

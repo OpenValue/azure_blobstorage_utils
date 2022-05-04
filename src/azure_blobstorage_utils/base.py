@@ -8,7 +8,13 @@ import json
 
 
 class BlobStorageBase:
-    def __init__(self, connection_string: str, local_base_path: str = "azure_tmp/"):
+    def __init__(self, connection_string: str, local_base_path: Optional[str] = "azure_tmp/"):
+        """
+
+        Args:
+            connection_string: Connection string to Azure Blob Storage
+            local_base_path: local folder where data will be downloaded if path is not specified
+        """
         self.blob_service_client = BlobServiceClient.from_connection_string(connection_string)
         self.local_base_path = local_base_path
         self.create_local_dir(self.local_base_path)
@@ -310,7 +316,7 @@ class BlobStorageBase:
 
     def delete_blobs(self, container_name: str, remote_file_names: List[str]):
         """
-        
+
         Args:
             container_name:
             remote_file_names:
