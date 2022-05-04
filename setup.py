@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="azure_blobstorage_utils",
-    version="0.1.0",
+    version="0.1.1",
     author="François Valadier",
     author_email="francois.valadier@gmail.com",
     description="Azure Blob Storage utils",
