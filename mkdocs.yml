@@ -11,6 +11,20 @@ nav:
     - About: about.md
 theme:
     name: material
+    features:
+      - navigation.tabs
+      - navigation.tabs.sticky
+      - search.highlight
+    palette:
+      - scheme: default
+        toggle:
+          icon: material/toggle-switch-off-outline
+          name: Switch to dark mode
+      - scheme: slate
+        toggle:
+          icon: material/toggle-switch
+          name: Switch to light mode
+
 plugins:
   - search
   - mkdocstrings:
@@ -21,6 +35,3 @@ plugins:
           rendering:
             show_source: false
             merge_init_into_class: True
-          setup_commands:
-            - import sys
-            - sys.path.insert(0, "src")
