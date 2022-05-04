@@ -1,0 +1,26 @@
+site_name: Azure Blob Storage Utils
+repo_url: https://github.com/OpenValue/azure_blobstorage_utils
+repo_name: OpenValue/azure_blobstorage_utils
+edit_uri: "" #disables edit button
+nav:
+    - Home: index.md
+    - Installation: installation.md
+    - Code Reference:
+          - Basic Usage: basic_usage.md
+          - Extended Usage: extended_usage.md
+    - About: about.md
+theme:
+    name: material
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          selection:
+            filters: [ "!^_" ]
+          rendering:
+            show_source: false
+            merge_init_into_class: True
+          setup_commands:
+            - import sys
+            - sys.path.insert(0, "src")
