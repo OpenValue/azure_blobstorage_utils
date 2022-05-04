@@ -18,8 +18,11 @@ class BlobStorageBase:
     def create_local_dir(dir_path: str):
         """
 
-        :param dir_path:
-        :return:
+        Args:
+            dir_path:
+
+        Returns:
+
         """
         os.makedirs(dir_path, exist_ok=True)
 
@@ -27,8 +30,11 @@ class BlobStorageBase:
     def get_folder_and_filename_from_full_path(filename: str):
         """
 
-        :param filename:
-        :return:
+        Args:
+            filename:
+
+        Returns:
+
         """
         folder_name = None
         filename_split = filename.split("/")
@@ -40,16 +46,22 @@ class BlobStorageBase:
     def get_container_client(self, container_name: str):
         """
 
-        :param container_name:
-        :return:
+        Args:
+            container_name:
+
+        Returns:
+
         """
         return self.blob_service_client.get_container_client(container_name)
 
     def create_container(self, container_name: str):
         """
 
-        :param container_name:
-        :return:
+        Args:
+            container_name:
+
+        Returns:
+
         """
         try:
             self.blob_service_client.create_container(name=container_name)
@@ -60,17 +72,23 @@ class BlobStorageBase:
     def delete_container(self, container_name: str):
         """
 
-        :param container_name:
-        :return:
+        Args:
+            container_name:
+
+        Returns:
+
         """
         self.blob_service_client.delete_container(container_name)
 
     def get_blob_client(self, container_name: str, blob_name: str):
         """
 
-        :param container_name:
-        :param blob_name:
-        :return:
+        Args:
+            container_name:
+            blob_name:
+
+        Returns:
+
         """
         return self.blob_service_client.get_blob_client(container=container_name,
                                                         blob=blob_name)
@@ -78,16 +96,20 @@ class BlobStorageBase:
     def clean_local_folder(self):
         """
 
-        :return:
+        Returns:
+
         """
         shutil.rmtree(self.local_base_path)
 
     def get_file_as_bytes(self, container_name: str, remote_file_name: str) -> bytes:
         """
 
-        :param container_name:
-        :param remote_file_name:
-        :return:
+        Args:
+            container_name:
+            remote_file_name:
+
+        Returns:
+
         """
         blob_client = self.get_blob_client(container_name, remote_file_name)
         return blob_client.download_blob().readall()
@@ -95,18 +117,24 @@ class BlobStorageBase:
     def get_file_as_text(self, container_name: str, remote_file_name: str) -> str:
         """
 
-        :param container_name:
-        :param remote_file_name:
-        :return:
+        Args:
+            container_name:
+            remote_file_name:
+
+        Returns:
+
         """
         return self.get_file_as_bytes(container_name, remote_file_name).decode("UTF-8")
 
     def get_file_as_dict(self, container_name: str, remote_file_name: str) -> str:
         """
 
-        :param container_name:
-        :param remote_file_name:
-        :return:
+        Args:
+            container_name:
+            remote_file_name:
+
+        Returns:
+
         """
         return json.loads(self.get_file_as_text(container_name, remote_file_name))
 
@@ -114,10 +142,13 @@ class BlobStorageBase:
             -> Union[List[str], Iterable[str]]:
         """
 
-        :param container_name:
-        :param prefix:
-        :param return_list:
-        :return:
+        Args:
+            container_name:
+            prefix:
+            return_list:
+
+        Returns:
+
         """
         container_client = self.get_container_client(container_name)
         if container_client.exists():
@@ -137,10 +168,13 @@ class BlobStorageBase:
     def download_file(self, container_name: str, remote_file_name: str, local_file_name: str = None):
         """
 
-        :param container_name:
-        :param remote_file_name:
-        :param local_file_name:
-        :return:
+        Args:
+            container_name:
+            remote_file_name:
+            local_file_name:
+
+        Returns:
+
         """
         if local_file_name is None:
             foldername, filename = self.get_folder_and_filename_from_full_path(remote_file_name)
@@ -167,10 +201,13 @@ class BlobStorageBase:
     def download_folder(self, container_name: str, remote_folder: str, local_folder: Optional[str] = None):
         """
 
-        :param container_name:
-        :param remote_folder:
-        :param local_folder:
-        :return:
+        Args:
+            container_name:
+            remote_folder:
+            local_folder:
+
+        Returns:
+
         """
         blob_gen = self.get_list_blobs_name(container_name, prefix=remote_folder, return_list=False)
 
@@ -184,11 +221,14 @@ class BlobStorageBase:
                     overwrite: bool = False):
         """
 
-        :param container_name:
-        :param local_file_name:
-        :param remote_file_name:
-        :param overwrite:
-        :return:
+        Args:
+            container_name:
+            local_file_name:
+            remote_file_name:
+            overwrite:
+
+        Returns:
+
         """
         container_client = self.get_container_client(container_name)
         if not container_client.exists():
@@ -197,7 +237,7 @@ class BlobStorageBase:
 
         if remote_file_name is None:
             foldername, filename = self.get_folder_and_filename_from_full_path(local_file_name)
-            remote_file_name = foldername.replace(self.local_base_path) + filename
+            remote_file_name = foldername.replace(self.local_base_path, "") + filename
 
         blob_client = container_client.get_blob_client(remote_file_name)
         try:
@@ -210,8 +250,11 @@ class BlobStorageBase:
     def _get_filepaths_from_folder(self, directory: str):
         """
 
-        :param directory:
-        :return:
+        Args:
+            directory:
+
+        Returns:
+
         """
         file_paths = []  # List which will store all of the full filepaths.
 
@@ -228,11 +271,14 @@ class BlobStorageBase:
                       overwrite: bool = False):
         """
 
-        :param container_name:
-        :param local_file_name:
-        :param remote_file_name:
-        :param overwrite:
-        :return:
+        Args:
+            container_name:
+            local_folder_name:
+            remote_folder_name:
+            overwrite:
+
+        Returns:
+
         """
         filepaths = self._get_filepaths_from_folder(local_folder_name)
         for filepath in filepaths:
@@ -245,11 +291,14 @@ class BlobStorageBase:
     def upload_bytes(self, bytes: bytes, container_name: str, remote_file_name: str, overwrite: bool = False):
         """
 
-        :param bytes:
-        :param container_name:
-        :param remote_file_name:
-        :param overwrite:
-        :return:
+        Args:
+            bytes:
+            container_name:
+            remote_file_name:
+            overwrite:
+
+        Returns:
+
         """
         container_client = self.get_container_client(container_name)
         if not container_client.exists():
@@ -261,10 +310,13 @@ class BlobStorageBase:
 
     def delete_blobs(self, container_name: str, remote_file_names: List[str]):
         """
+        
+        Args:
+            container_name:
+            remote_file_names:
 
-        :param container_name:
-        :param remote_file_names:
-        :return:
+        Returns:
+
         """
         container_client = self.get_container_client(container_name)
         if not container_client.exists():
