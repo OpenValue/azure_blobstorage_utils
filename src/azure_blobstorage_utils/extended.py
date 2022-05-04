@@ -24,10 +24,13 @@ class BlobStorageExtended(BlobStorageBase):
     def get_file_as_pandas_df(self, container_name: str, file_path: str, **kwargs) -> pd.DataFrame:
         """
 
-        :param container_name:
-        :param file_path:
-        :param kwargs:
-        :return:
+        Args:
+            container_name:
+            file_path:
+            **kwargs:
+
+        Returns:
+
         """
         stream = self.get_file_as_bytes(container_name, file_path)
         if file_path.endswith(".csv") | file_path.endswith(".txt"):
@@ -39,15 +42,18 @@ class BlobStorageExtended(BlobStorageBase):
         elif file_path.endswith(".xls") | file_path.endswith(".xlsx"):
             return pd.read_excel(io.BytesIO(stream), **kwargs)
         else:
-            print("Extension not recognized - only ['csv','txt','parquet','json','xls','xlsx'] are supported.")
-            return None
+            raise ValueError(
+                "Extension not recognized - only ['csv','txt','parquet','json','xls','xlsx'] are supported.")
 
     def get_image_as_numpy_array(self, container_name: str, file_path: str) -> np.ndarray:
         """
 
-        :param container_name:
-        :param file_path:
-        :return:
+        Args:
+            container_name:
+            file_path:
+
+        Returns:
+
         """
         stream = self.get_file_as_bytes(container_name, file_path)
         img = cv2.imdecode(np.frombuffer(stream, np.uint8), cv2.IMREAD_COLOR)
@@ -57,11 +63,14 @@ class BlobStorageExtended(BlobStorageBase):
                                        overwrite: bool = False):
         """
 
-        :param container_name:
-        :param img:
-        :param remote_file_name:
-        :param overwrite:
-        :return:
+        Args:
+            img:
+            container_name:
+            remote_file_name:
+            overwrite:
+
+        Returns:
+
         """
         _, img_encode = cv2.imencode('.jpg', img)
         img_bytes = img_encode.tobytes()
@@ -71,10 +80,15 @@ class BlobStorageExtended(BlobStorageBase):
                          **kwargs) -> pd.DataFrame:
         """
 
-        :param container_name:
-        :param remote_file_name:
-        :param kwargs:
-        :return:
+        Args:
+            df:
+            container_name:
+            remote_file_name:
+            overwrite:
+            **kwargs:
+
+        Returns:
+
         """
         foldername, filename = self.get_folder_and_filename_from_full_path(remote_file_name)
         if filename.endswith(".csv") | filename.endswith(".txt"):
