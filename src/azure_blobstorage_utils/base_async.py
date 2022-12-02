@@ -4,10 +4,10 @@ import shutil
 from typing import Iterable, List, Optional, Tuple, Union
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob.aio import BlobServiceClient
 
 
-class BlobStorageBase:
+class BlobStorageBaseAsync:
     def __init__(
         self, connection_string: str, local_base_path: Optional[str] = "azure_tmp/"
     ):
@@ -54,7 +54,7 @@ class BlobStorageBase:
             file_name = filename_split[-1]
         return directory_name, file_name
 
-    def get_container_client(self, container_name: str):
+    async def get_container_client(self, container_name: str):
         """
         Get container client from container_name
 
@@ -65,14 +65,14 @@ class BlobStorageBase:
 
         """
         container_client = self.blob_service_client.get_container_client(container_name)
-        if container_client.exists():
+        if await container_client.exists():
             return container_client
         else:
             raise ResourceNotFoundError(
                 "Container [{}] does not exist.".format(container_name)
             )
 
-    def create_container(self, container_name: str):
+    async def create_container(self, container_name: str):
         """
         Create a container named container_name
 
@@ -83,13 +83,13 @@ class BlobStorageBase:
 
         """
         try:
-            self.blob_service_client.create_container(name=container_name)
+            await self.blob_service_client.create_container(name=container_name)
         except ResourceExistsError(
             "Container [{}] already exists. Skipping creation".format(container_name)
         ):
             pass
 
-    def delete_container(self, container_name: str):
+    async def delete_container(self, container_name: str):
         """
         Delete container named container_name
 
@@ -99,7 +99,7 @@ class BlobStorageBase:
         Returns:
 
         """
-        self.blob_service_client.delete_container(container_name)
+        await self.blob_service_client.delete_container(container_name)
 
     def get_blob_client(self, container_name: str, blob_name: str):
         """
@@ -125,7 +125,9 @@ class BlobStorageBase:
         """
         shutil.rmtree(self.local_base_path)
 
-    def get_file_as_bytes(self, container_name: str, remote_file_name: str) -> bytes:
+    async def get_file_as_bytes(
+        self, container_name: str, remote_file_name: str
+    ) -> bytes:
         """
         Get blob as bytes (in memory object)
 
@@ -137,9 +139,11 @@ class BlobStorageBase:
 
         """
         blob_client = self.get_blob_client(container_name, remote_file_name)
-        return blob_client.download_blob().readall()
+        stream = await blob_client.download_blob()
+        data = await stream.readall()
+        return data
 
-    def get_file_as_text(self, container_name: str, remote_file_name: str) -> str:
+    async def get_file_as_text(self, container_name: str, remote_file_name: str) -> str:
         """
         Get blob as text
 
@@ -150,9 +154,9 @@ class BlobStorageBase:
         Returns:
 
         """
-        return self.get_file_as_bytes(container_name, remote_file_name).decode("UTF-8")
+        return await self.get_file_as_bytes(container_name, remote_file_name)
 
-    def get_file_as_dict(self, container_name: str, remote_file_name: str) -> str:
+    async def get_file_as_dict(self, container_name: str, remote_file_name: str) -> str:
         """
         Get blob as dict (eg. for JSON files)
 
@@ -163,9 +167,10 @@ class BlobStorageBase:
         Returns:
 
         """
-        return json.loads(self.get_file_as_text(container_name, remote_file_name))
+        raw_test = await self.get_file_as_text(container_name, remote_file_name)
+        return json.loads(raw_test.decode("UTF-8"))
 
-    def get_list_blobs_name(
+    async def get_list_blobs_name(
         self,
         container_name: str,
         prefix: Optional[str] = None,
@@ -182,20 +187,21 @@ class BlobStorageBase:
         Returns:
 
         """
-        container_client = self.get_container_client(container_name)
+        container_client = await self.get_container_client(container_name)
         if prefix is not None:
-            res = (
-                blob.name
-                for blob in container_client.list_blobs(name_starts_with=prefix)
-            )
+            res = []
+            async for blob in container_client.list_blobs(name_starts_with=prefix):
+                res.append(blob.name)
         else:
-            res = (blob.name for blob in container_client.list_blobs())
+            res = []
+            async for blob in container_client.list_blobs():
+                res.append(blob.name)
 
-        if return_list:
-            res = list(res)
+        if not return_list:
+            res = (y for y in res)
         return res
 
-    def download_file(
+    async def download_file(
         self,
         container_name: str,
         remote_file_name: str,
@@ -236,9 +242,11 @@ class BlobStorageBase:
         blob_client = self.get_blob_client(container_name, remote_file_name)
         print("Downloading {} to {}".format(remote_file_name, local_file_name))
         with open(local_file_name, "wb") as my_blob:
-            my_blob.write(blob_client.download_blob().readall())
+            stream = await blob_client.download_blob()
+            data = await stream.readall()
+            my_blob.write(data)
 
-    def download_directory(
+    async def download_directory(
         self,
         container_name: str,
         remote_directory: str,
@@ -255,21 +263,21 @@ class BlobStorageBase:
         Returns:
 
         """
-        blob_gen = self.get_list_blobs_name(
+        blob_gen = await self.get_list_blobs_name(
             container_name, prefix=remote_directory, return_list=False
         )
 
         for blob_name in blob_gen:
             if local_directory is not None:
-                self.download_file(
+                await self.download_file(
                     container_name,
                     blob_name,
                     (local_directory + blob_name).replace("//", "/"),
                 )
             else:
-                self.download_file(container_name, blob_name)
+                await self.download_file(container_name, blob_name)
 
-    def upload_file(
+    async def upload_file(
         self,
         container_name: str,
         local_file_name: str,
@@ -288,10 +296,10 @@ class BlobStorageBase:
         Returns:
 
         """
-        container_client = self.get_container_client(container_name)
-        if not container_client.exists():
-            self.create_container(container_name)
-            container_client = self.get_container_client(container_name)
+        container_client = await self.get_container_client(container_name)
+        if not await container_client.exists():
+            await self.create_container(container_name)
+            container_client = await self.get_container_client(container_name)
 
         if remote_file_name is None:
             directory_name, file_name = self.get_directory_and_filename_from_full_path(
@@ -304,7 +312,7 @@ class BlobStorageBase:
         blob_client = container_client.get_blob_client(remote_file_name)
         try:
             with open(local_file_name, "rb") as data:
-                blob_client.upload_blob(data, overwrite=overwrite)
+                await blob_client.upload_blob(data, overwrite=overwrite)
         except ResourceExistsError as e:
             print(
                 "File [{}] already exists. Use overwrite = True if needed".format(
@@ -326,7 +334,7 @@ class BlobStorageBase:
         file_paths = []  # List which will store all of the full file paths.
 
         # Walk the tree.
-        for root, directories, files in os.walk(directory_name):
+        for root, _, files in os.walk(directory_name):
             for file_name in files:
                 # Join the two strings in order to form the full filepath.
                 file_path = os.path.join(root, file_name)
@@ -334,7 +342,7 @@ class BlobStorageBase:
 
         return file_paths
 
-    def upload_directory(
+    async def upload_directory(
         self,
         container_name: str,
         local_directory_name: str,
@@ -356,16 +364,16 @@ class BlobStorageBase:
         file_paths = self._get_file_paths_from_directory(local_directory_name)
         for filepath in file_paths:
             if remote_directory_name is not None:
-                self.upload_file(
+                await self.upload_file(
                     container_name,
                     filepath,
                     (remote_directory_name + filepath).replace("//", "/"),
                     overwrite,
                 )
             else:
-                self.upload_file(container_name, filepath, filepath, overwrite)
+                await self.upload_file(container_name, filepath, filepath, overwrite)
 
-    def upload_bytes(
+    async def upload_bytes(
         self,
         my_bytes: bytes,
         container_name: str,
@@ -384,15 +392,15 @@ class BlobStorageBase:
         Returns:
 
         """
-        container_client = self.get_container_client(container_name)
-        if not container_client.exists():
-            self.create_container(container_name)
-            container_client = self.get_container_client(container_name)
+        container_client = await self.get_container_client(container_name)
+        if not await container_client.exists():
+            await self.create_container(container_name)
+            container_client = await self.get_container_client(container_name)
 
         blob_client = container_client.get_blob_client(remote_file_name)
-        blob_client.upload_blob(my_bytes, overwrite=overwrite)
+        await blob_client.upload_blob(my_bytes, overwrite=overwrite)
 
-    def delete_blobs(self, container_name: str, remote_file_names: List[str]):
+    async def delete_blobs(self, container_name: str, remote_file_names: List[str]):
         """
         Delete list of blobs from container_name
 
@@ -403,5 +411,5 @@ class BlobStorageBase:
         Returns:
 
         """
-        container_client = self.get_container_client(container_name)
-        container_client.delete_blobs(*remote_file_names)
+        container_client = await self.get_container_client(container_name)
+        await container_client.delete_blobs(*remote_file_names)

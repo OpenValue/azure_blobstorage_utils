@@ -1,4 +1,7 @@
 azure-storage-blob
+asyncio
+aiohttp
+black
 pandas[extended]
 openpyxl[extended]
 opencv-python[extended]
