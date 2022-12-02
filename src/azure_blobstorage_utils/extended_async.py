@@ -3,7 +3,7 @@ import os
 import sys
 from typing import Dict, Optional
 
-from .base import BlobStorageBase
+from .base_async import BlobStorageBaseAsync
 
 try:
     import cv2
@@ -19,7 +19,7 @@ except ImportError as impErr:
     sys.exit(1)
 
 
-class BlobStorageExtended(BlobStorageBase):
+class BlobStorageExtendedAsync(BlobStorageBaseAsync):
     def __init__(
         self, connection_string: str, local_base_path: Optional[str] = "azure_tmp/"
     ):
@@ -31,7 +31,7 @@ class BlobStorageExtended(BlobStorageBase):
         """
         super().__init__(connection_string, local_base_path)
 
-    def get_file_as_pandas_df(
+    async def get_file_as_pandas_df(
         self, container_name: str, remote_file_name: str, **kwargs: Optional[Dict]
     ) -> pd.DataFrame:
         """
@@ -45,7 +45,7 @@ class BlobStorageExtended(BlobStorageBase):
         Returns: a pandas DataFrame
 
         """
-        stream = self.get_file_as_bytes(container_name, remote_file_name)
+        stream = await self.get_file_as_bytes(container_name, remote_file_name)
         if remote_file_name.endswith(".csv") | remote_file_name.endswith(".txt"):
             return pd.read_csv(io.BytesIO(stream), **kwargs)
         elif remote_file_name.endswith(".parquet"):
@@ -59,7 +59,7 @@ class BlobStorageExtended(BlobStorageBase):
                 "Extension not recognized - only ['csv','txt','parquet','json','xls','xlsx'] are supported."
             )
 
-    def get_image_as_numpy_array(
+    async def get_image_as_numpy_array(
         self, container_name: str, remote_file_name: str
     ) -> np.ndarray:
         """
@@ -72,11 +72,11 @@ class BlobStorageExtended(BlobStorageBase):
         Returns: a RGB numpy array of the image
 
         """
-        stream = self.get_file_as_bytes(container_name, remote_file_name)
+        stream = await self.get_file_as_bytes(container_name, remote_file_name)
         img = cv2.imdecode(np.frombuffer(stream, np.uint8), cv2.IMREAD_COLOR)
         return img
 
-    def upload_image_bytes_as_jpg_file(
+    async def upload_image_bytes_as_jpg_file(
         self,
         img: np.ndarray,
         container_name: str,
@@ -97,9 +97,9 @@ class BlobStorageExtended(BlobStorageBase):
         """
         _, img_encode = cv2.imencode(".jpg", img)
         img_bytes = img_encode.tobytes()
-        self.upload_bytes(img_bytes, container_name, remote_file_name, overwrite)
+        await self.upload_bytes(img_bytes, container_name, remote_file_name, overwrite)
 
-    def upload_pandas_df(
+    async def upload_pandas_df(
         self,
         df: pd.DataFrame,
         container_name: str,
@@ -119,9 +119,7 @@ class BlobStorageExtended(BlobStorageBase):
         Returns:
 
         """
-        foldername, filename = self.get_directory_and_filename_from_full_path(
-            remote_file_name
-        )
+        _, filename = self.get_directory_and_filename_from_full_path(remote_file_name)
         if filename.endswith(".csv") | filename.endswith(".txt"):
             df.to_csv(self.local_base_path + filename, **kwargs)
         elif remote_file_name.endswith(".parquet"):
@@ -135,7 +133,7 @@ class BlobStorageExtended(BlobStorageBase):
                 "Extension not recognized - only ['csv','txt','parquet','json','xls','xlsx'] are supported."
             )
         if os.path.exists(self.local_base_path + filename):
-            self.upload_file(
+            await self.upload_file(
                 container_name,
                 local_file_name=self.local_base_path + filename,
                 remote_file_name=remote_file_name,

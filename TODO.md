@@ -4,5 +4,6 @@
 - [BASE] Add dowload folder - ok
 - [BASE] Add upload folder - ok
 - [EXTENDED] Add upload DF as type - ok
-- [ALL] Generate documentation
+- [ALL] Generate documentation - ok 
+- [ALL] Add async mode - ok
 
