@@ -15,7 +15,7 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     install_requires=["azure-storage-blob", "aiohttp", "asyncio"],
-    extras_require={"extended": ["pandas", "openpyxl", "opencv-python", "pyarrow"]},
+    extras_require={"extended": ["pandas", "openpyxl", "simplejpeg", "pyarrow"]},
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
