@@ -45,7 +45,6 @@ extended_blob_helper.upload_image_bytes_as_jpg_file(img_bytes,
                                                     container_name,
                                                     remote_file_name)
 ```
-
 # Async
 
 Basic & extended are available in async mode :

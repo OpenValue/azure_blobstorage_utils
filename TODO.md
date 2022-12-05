@@ -6,4 +6,5 @@
 - [EXTENDED] Add upload DF as type - ok
 - [ALL] Generate documentation - ok 
 - [ALL] Add async mode - ok
+- [ALL] simplejpeg - ok
 

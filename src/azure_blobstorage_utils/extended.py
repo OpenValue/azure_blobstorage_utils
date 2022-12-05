@@ -6,9 +6,9 @@ from typing import Dict, Optional
 from .base import BlobStorageBase
 
 try:
-    import cv2
     import numpy as np
     import pandas as pd
+    from simplejpeg import decode_jpeg, encode_jpeg
 except ModuleNotFoundError as moduleErr:
     print("[Error]: Failed to import (Module Not Found) {}.".format(moduleErr.args[0]))
     print("Please install with extras")
@@ -73,8 +73,7 @@ class BlobStorageExtended(BlobStorageBase):
 
         """
         stream = self.get_file_as_bytes(container_name, remote_file_name)
-        img = cv2.imdecode(np.frombuffer(stream, np.uint8), cv2.IMREAD_COLOR)
-        return img
+        return decode_jpeg(stream)
 
     def upload_image_bytes_as_jpg_file(
         self,
@@ -82,6 +81,7 @@ class BlobStorageExtended(BlobStorageBase):
         container_name: str,
         remote_file_name: str,
         overwrite: Optional[bool] = False,
+        quality: Optional[int] = 95,
     ):
         """
         Upload an in memory image numpy array as a jpg file
@@ -95,9 +95,12 @@ class BlobStorageExtended(BlobStorageBase):
         Returns:
 
         """
-        _, img_encode = cv2.imencode(".jpg", img)
-        img_bytes = img_encode.tobytes()
-        self.upload_bytes(img_bytes, container_name, remote_file_name, overwrite)
+        self.upload_bytes(
+            encode_jpeg(img, quality=quality),
+            container_name,
+            remote_file_name,
+            overwrite,
+        )
 
     def upload_pandas_df(
         self,
