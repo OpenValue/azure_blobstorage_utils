@@ -4,5 +4,5 @@ aiohttp
 black
 pandas[extended]
 openpyxl[extended]
-opencv-python[extended]
+simplejpeg[extended]
 pyarrow[extended]
