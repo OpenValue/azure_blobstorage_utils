@@ -60,7 +60,7 @@ class BlobStorageExtended(BlobStorageBase):
             )
 
     def get_image_as_numpy_array(
-        self, container_name: str, remote_file_name: str
+        self, container_name: str, remote_file_name: str, **kwargs: Optional[Dict]
     ) -> np.ndarray:
         """
         Get an image file from blob & load it as numpy array
@@ -73,7 +73,7 @@ class BlobStorageExtended(BlobStorageBase):
 
         """
         stream = self.get_file_as_bytes(container_name, remote_file_name)
-        return decode_jpeg(stream)
+        return decode_jpeg(stream, **kwargs)
 
     def upload_image_bytes_as_jpg_file(
         self,
@@ -81,7 +81,7 @@ class BlobStorageExtended(BlobStorageBase):
         container_name: str,
         remote_file_name: str,
         overwrite: Optional[bool] = False,
-        quality: Optional[int] = 95,
+        **kwargs: Optional[Dict]
     ):
         """
         Upload an in memory image numpy array as a jpg file
@@ -95,8 +95,13 @@ class BlobStorageExtended(BlobStorageBase):
         Returns:
 
         """
+        if "quality" in kwargs:
+            quality = kwargs["quality"]
+            del kwargs["quality"]
+        else:
+            quality = 95
         self.upload_bytes(
-            encode_jpeg(img, quality=quality),
+            encode_jpeg(img, quality=quality, **kwargs),
             container_name,
             remote_file_name,
             overwrite,
