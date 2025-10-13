@@ -21,15 +21,16 @@ except ImportError as impErr:
 
 class BlobStorageExtended(BlobStorageBase):
     def __init__(
-        self, connection_string: str, local_base_path: Optional[str] = "azure_tmp/"
+        self, connection_string: str, insecure: bool = False, local_base_path: Optional[str] = "azure_tmp/"
     ):
         """
 
         Args:
             connection_string: Connection string to Azure Blob Storage
             local_base_path: local folder where data will be downloaded if path is not specified
+            insecure: If True, disables SSL verification. Defaults to False.
         """
-        super().__init__(connection_string, local_base_path)
+        super().__init__(connection_string=connection_string, insecure=insecure, local_base_path=local_base_path)
 
     def get_file_as_pandas_df(
         self, container_name: str, remote_file_name: str, **kwargs: Optional[Dict]
