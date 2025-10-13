@@ -5,6 +5,7 @@ from typing import Iterable, List, Optional, Tuple, Union
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob import BlobServiceClient
+from azure.core.pipeline.transport import RequestsTransport
 
 
 class BlobStorageBase:
