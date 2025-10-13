@@ -9,20 +9,19 @@ from azure.storage.blob import BlobServiceClient
 
 class BlobStorageBase:
     def __init__(
-        self, connection_string: str, local_base_path: Optional[str] = "azure_tmp/"
+        self, connection_string: str, insecure: bool = False, local_base_path: Optional[str] = "azure_tmp/"
     ):
         """
-
         Args:
-            connection_string: Connection string to Azure Blob Storage
-            local_base_path: local folder where data will be downloaded if path is not specified
+            connection_string:  Connection string to Azure Blob Storage
+            local_base_path:    local folder where data will be downloaded if path is not specified
+            insecure: If True, disables SSL verification. Defaults to False.
         """
-        self.blob_service_client = BlobServiceClient.from_connection_string(
-            connection_string
-        )
+        transport = RequestsTransport(connection_verify=not insecure) if insecure else None
+        self.blob_service_client = BlobServiceClient.from_connection_string(connection_string, transport=transport)
         self.local_base_path = local_base_path
-        self.create_local_dir(self.local_base_path)
-        print("Using path: [{}] as local storage".format(self.local_base_path))
+        self.create_local_dir(local_base_path)
+        print(f"Using path: [{local_base_path}] as local storage (insecure={insecure})")
 
     @classmethod
     def create_local_dir(cls, directory_name: str):
